@@ -1,0 +1,13 @@
+{
+  "folders": [
+	{
+		"name": "edblock-web",
+		"path": "."
+	},
+	{
+		"name": "src",
+		"path": "../src"
+	}
+],
+  "settings": {}
+}
