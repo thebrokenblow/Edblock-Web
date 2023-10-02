@@ -1,6 +1,6 @@
 <template>
   <div class="menu">
-    <div class="list">
+    <div class="symbols">
       <canvas class="action_symbol"></canvas>
     </div>
     <canvas ref="canvas_symbols" class="canvas_symbols"></canvas>
@@ -71,7 +71,12 @@ body {
 .canvas_symbols {
   height: 100%;
   width: calc(100% - 140px);
+  margin: 0 0 0 140px;
   display: block;
   background-color: white;
+}
+
+.symbols {
+  position: fixed;
 }
 </style>
