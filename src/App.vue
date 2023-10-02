@@ -4,4 +4,6 @@
 
 <script></script>
 
-<style></style>
+<style>
+@import "./reset.css";
+</style>
