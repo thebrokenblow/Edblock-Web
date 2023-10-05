@@ -1,7 +1,7 @@
 <template>
   <div class="menu">
     <div class="symbols">
-      <canvas class="action_symbol"></canvas>
+      <canvas @click="addSymol" class="action_symbol"></canvas>
     </div>
     <canvas
       v-on:mousedown="mouseDown"
@@ -10,7 +10,41 @@
       v-on:mousemove="mouseMove"
       ref="canvasSymbols"
       class="canvas_symbols"
-    ></canvas>
+    >
+    </canvas>
+    <svg
+      class="grid_canvas_symbols"
+      width="100%"
+      height="100%"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <pattern
+          id="smallGrid"
+          width="10"
+          height="10"
+          patternUnits="userSpaceOnUse"
+        >
+          <path
+            d="M 10 0 L 0 0 0 10"
+            fill="none"
+            stroke="gray"
+            stroke-width="0.5"
+          />
+        </pattern>
+        <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+          <rect width="80" height="80" fill="url(#smallGrid)" />
+          <path
+            d="M 80 0 L 0 0 0 80"
+            fill="none"
+            stroke="gray"
+            stroke-width="1"
+          />
+        </pattern>
+      </defs>
+
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
   </div>
 </template>
 
@@ -53,7 +87,7 @@ export default {
 
     mouseDown(event) {
       event.preventDefault();
-      this.startX = parseInt(event.clientX)``;
+      this.startX = parseInt(event.clientX);
       this.startY = parseInt(event.clientY);
 
       [this.startX, this.startY] = this.roundingCoordinates(
@@ -119,6 +153,10 @@ export default {
       }
     },
 
+    addSymol() {
+      this.shapes.push({ x: 0, y: 0, width: 140, height: 60, color: "blue" });
+      this.drawSymbols();
+    },
     drawCanvas() {
       this.canvasSymbols = this.$refs.canvasSymbols;
       this.contextCanvasSymbols = this.canvasSymbols.getContext("2d");
@@ -135,6 +173,7 @@ export default {
       const shapeTop = shape.y;
       const shapeBottom = shape.y + shape.height;
 
+      console.log(y, shapeTop);
       if (
         x >= shapeLeft &&
         x <= shapeRight &&
@@ -163,11 +202,18 @@ export default {
   background-color: gold;
 }
 
+.grid_canvas_symbols {
+  margin: 0 0 0 140px;
+  height: 840px;
+}
+
 .canvas_symbols {
-  background-color: aqua;
+  position: absolute;
+  margin: 0 0 0 140px;
 }
 
 .symbols {
+  position: fixed;
   width: 140px;
 }
 </style>
