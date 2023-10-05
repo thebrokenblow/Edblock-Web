@@ -12,39 +12,6 @@
       class="canvas_symbols"
     ></canvas>
   </div>
-  <svg
-    width="100%"
-    height="100%"
-    class="grid_canvas_symbols"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <pattern
-        id="smallGrid"
-        width="10"
-        height="10"
-        patternUnits="userSpaceOnUse"
-      >
-        <path
-          d="M 10 0 L 0 0 0 10"
-          fill="none"
-          stroke="gray"
-          stroke-width="0.5"
-        />
-      </pattern>
-      <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-        <rect width="80" height="80" fill="url(#smallGrid)" />
-        <path
-          d="M 80 0 L 0 0 0 80"
-          fill="none"
-          stroke="gray"
-          stroke-width="1"
-        />
-      </pattern>
-    </defs>
-
-    <rect width="100%" height="100%" fill="url(#grid)" />
-  </svg>
 </template>
 
 <script>
@@ -86,8 +53,14 @@ export default {
 
     mouseDown(event) {
       event.preventDefault();
-      this.startX = parseInt(event.clientX);
+      this.startX = parseInt(event.clientX)``;
       this.startY = parseInt(event.clientY);
+
+      [this.startX, this.startY] = this.roundingCoordinates(
+        this.startX,
+        this.startY
+      );
+
       let indexShape = 0;
       for (const shape of this.shapes) {
         if (this.isMouseInShape(this.startX, this.startY, shape)) {
@@ -96,6 +69,12 @@ export default {
         }
         indexShape++;
       }
+    },
+
+    roundingCoordinates(x, y) {
+      x -= x % 10;
+      y -= y % 10;
+      return [x, y];
     },
 
     mouseMove(event) {
@@ -107,13 +86,20 @@ export default {
 
       let mouseX = parseInt(event.clientX);
       let mouseY = parseInt(event.clientY);
+      [mouseX, mouseY] = this.roundingCoordinates(mouseX, mouseY);
 
       this.currentShape = this.shapes[this.currentShapeIndex];
 
-      this.currentShape.x = mouseX - (mouseX % 10) - 140;
-      this.currentShape.y = mouseY - (mouseY % 10);
+      let dx = mouseX - this.startX;
+      let dy = mouseY - this.startY;
+
+      this.currentShape.x += dx;
+      this.currentShape.y += dy;
 
       this.drawSymbols();
+
+      this.startX = mouseX;
+      this.startY = mouseY;
     },
 
     drawSymbols() {
@@ -137,17 +123,24 @@ export default {
       this.canvasSymbols = this.$refs.canvasSymbols;
       this.contextCanvasSymbols = this.canvasSymbols.getContext("2d");
 
-      this.canvasSymbols.width = window.innerWidth;
+      this.canvasSymbols.width = window.innerWidth - 140;
       this.canvasSymbols.height = window.innerHeight;
       this.drawSymbols();
     },
 
     isMouseInShape(x, y, shape) {
+      x -= 140;
       const shapeLeft = shape.x;
-      const shapeRight = shape.x + shape.width + 140;
+      const shapeRight = shape.x + shape.width;
       const shapeTop = shape.y;
       const shapeBottom = shape.y + shape.height;
-      if (x > shapeLeft && x < shapeRight && y > shapeTop && y < shapeBottom) {
+
+      if (
+        x >= shapeLeft &&
+        x <= shapeRight &&
+        y >= shapeTop &&
+        y <= shapeBottom
+      ) {
         return true;
       }
 
@@ -159,35 +152,22 @@ export default {
 
 <style>
 @import "./reset.css";
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
 
 .menu {
   display: flex;
-  height: 100%;
 }
 
 .action_symbol {
   width: 140px;
   height: 60px;
-  background-color: green;
+  background-color: gold;
 }
 
 .canvas_symbols {
-  width: calc(100% - 140);
-  position: absolute;
-  margin: 0 0 0 140px;
+  background-color: aqua;
 }
 
 .symbols {
-  position: fixed;
-}
-
-.grid_canvas_symbols {
-  height: 1000px;
-  margin: 0 0 0 140px;
+  width: 140px;
 }
 </style>
